@@ -1,0 +1,39 @@
+{
+  "name": "Wamarket.bet – Pronostics IA",
+  "short_name": "Wamarket.bet",
+  "description": "Le meilleur site de pronostics IA avec les cotes les plus fiables",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "entertainment", "finance"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Pronostics du jour",
+      "url": "/index.html#pronostics",
+      "description": "Voir les pronostics du jour"
+    },
+    {
+      "name": "En Direct",
+      "url": "/index.html#live",
+      "description": "Matchs en direct"
+    }
+  ]
+}
