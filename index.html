@@ -2,1073 +2,910 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Secrets de Mam Diop - Gestion</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-
-        :root {
-            --primary: #8B0000;
-            --primary-dark: #5C0000;
-            --gold: #D4AF37;
-            --gold-light: #F4E5A1;
-            --cream: #FFF8F0;
-            --dark: #2C1810;
-            --success: #2E7D32;
-            --danger: #C62828;
-        }
-
-        body {
-            background: linear-gradient(135deg, #FFF8F0 0%, #F4E5A1 100%);
-            color: var(--dark);
-            min-height: 100vh;
-        }
-
-        .screen { display: none; }
-        .screen.active { display: block; }
-
-        /* LOGIN */
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #8B0000 0%, #2C1810 100%);
-            padding: 20px;
-        }
-
-        .login-box {
-            max-width: 420px;
-            width: 100%;
-            background: white;
-            padding: 45px 35px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            border-top: 5px solid var(--gold);
-        }
-
-        .logo {
-            font-size: 70px;
-            margin-bottom: 10px;
-        }
-
-        .login-box h1 {
-            color: var(--primary);
-            font-size: 24px;
-            margin-bottom: 3px;
-            letter-spacing: 2px;
-        }
-
-        .login-box .subtitle {
-            color: var(--gold);
-            font-weight: bold;
-            letter-spacing: 2px;
-            font-size: 11px;
-            margin-bottom: 5px;
-        }
-
-        .whatsapp-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #25D366;
-            color: white;
-            padding: 7px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            text-decoration: none;
-            margin-bottom: 20px;
-            transition: all 0.2s;
-        }
-
-        .whatsapp-btn:hover { background: #128C7E; transform: scale(1.05); }
-
-        .login-box input {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .login-box input:focus {
-            border-color: var(--gold);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
-        }
-
-        .login-box button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            letter-spacing: 1px;
-            transition: transform 0.2s;
-        }
-
-        .login-box button:hover { transform: translateY(-2px); }
-
-        .error { color: var(--danger); margin-top: 12px; font-weight: bold; }
-
-        .info-box {
-            background: var(--cream);
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-            text-align: left;
-        }
-
-        /* HEADER */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border-bottom: 3px solid var(--gold);
-        }
-
-        .header-left h2 { font-size: 18px; letter-spacing: 1px; }
-        .header-left h2 span { color: var(--gold); }
-        .header-left small { color: var(--gold-light); font-size: 11px; }
-
-        .header-wa {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #25D366;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-        }
-
-        .btn-small {
-            background: var(--gold);
-            color: var(--dark);
-            border: none;
-            padding: 7px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-
-        .btn-small:hover { background: var(--gold-light); }
-
-        /* NOTIFICATION VENTE */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, var(--success) 0%, #1B5E20 100%);
-            color: white;
-            padding: 18px 28px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            z-index: 9999;
-            display: none;
-            animation: slideIn 0.4s ease-out;
-            border-left: 6px solid var(--gold);
-            max-width: 320px;
-        }
-
-        .notification.show { display: flex; align-items: center; gap: 12px; }
-
-        .notification .notif-icon { font-size: 35px; }
-
-        .notification .notif-body {}
-        .notification .notif-title { font-size: 16px; font-weight: bold; }
-        .notification .notif-sub { font-size: 13px; opacity: 0.9; margin-top: 3px; }
-
-        @keyframes slideIn {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* NAV TABS */
-        .nav-tabs {
-            display: flex;
-            background: white;
-            overflow-x: auto;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 0 10px;
-        }
-
-        .tab {
-            padding: 15px 20px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            white-space: nowrap;
-            font-size: 13px;
-            font-weight: 600;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .tab:hover { color: var(--primary); background: var(--cream); }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--gold);
-            background: var(--cream);
-        }
-
-        .tab-content { display: none; padding: 25px; max-width: 1200px; margin: 0 auto; }
-        .tab-content.active { display: block; }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--gold);
-        }
-
-        .section-header h3 { color: var(--primary); font-size: 20px; }
-
-        .btn-add {
-            background: linear-gradient(135deg, var(--gold) 0%, #B8961F 100%);
-            color: var(--dark);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 3px 10px rgba(212,175,55,0.4);
-            transition: transform 0.2s;
-        }
-
-        .btn-add:hover { transform: translateY(-2px); }
-
-        .btn-green {
-            background: linear-gradient(135deg, var(--success) 0%, #1B5E20 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            margin: 5px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .btn-red {
-            background: linear-gradient(135deg, var(--danger) 0%, #8B0000 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            margin: 5px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        /* MENU */
-        .categorie-section {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .categorie-title {
-            color: var(--primary);
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px dashed var(--gold);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
-
-        .plat-card {
-            background: var(--cream);
-            border-radius: 12px;
-            padding: 15px;
-            border-left: 4px solid var(--gold);
-            transition: all 0.3s;
-        }
-
-        .plat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-
-        .plat-emoji { font-size: 38px; margin-bottom: 8px; }
-        .plat-nom { font-weight: bold; color: var(--dark); font-size: 15px; margin-bottom: 5px; }
-        .plat-prix { color: var(--primary); font-weight: bold; font-size: 17px; }
-
-        .plat-actions { margin-top: 10px; display: flex; gap: 5px; }
-
-        .btn-delete {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            flex: 1;
-        }
-
-        /* COMMANDES */
-        .commande-card {
-            background: white;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-            border-left: 5px solid var(--primary);
-        }
-
-        .commande-card h4 { color: var(--primary); margin-bottom: 8px; font-size: 17px; }
-
-        .badge {
-            background: var(--gold);
-            color: var(--dark);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-left: 8px;
-            font-weight: bold;
-        }
-
-        .commande-actions { margin-top: 12px; display: flex; gap: 10px; }
-
-        .commande-actions button {
-            padding: 8px 14px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            flex: 1;
-        }
-
-        /* TABLES */
-        .tables-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 15px;
-        }
-
-        .table-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px 15px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-        }
-
-        .table-card.libre { border: 3px solid var(--success); }
-
-        .table-card.occupee {
-            border: 3px solid var(--danger);
-            background: linear-gradient(135deg, #FFEBEE 0%, white 100%);
-        }
-
-        .table-card:hover { transform: scale(1.05); }
-        .table-icon { font-size: 35px; margin-bottom: 8px; }
-        .table-card strong { color: var(--primary); font-size: 14px; }
-
-        /* CAISSE */
-        .caisse-total {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 35px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(139,0,0,0.3);
-            border: 3px solid var(--gold);
-        }
-
-        .caisse-total p { font-size: 13px; letter-spacing: 2px; color: var(--gold); }
-        .caisse-total h2 { font-size: 40px; margin-top: 10px; }
-
-        .caisse-card {
-            background: white;
-            padding: 14px 18px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border-left: 4px solid var(--success);
-        }
-
-        /* STATS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 18px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border-top: 4px solid var(--gold);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card p { color: #666; font-size: 13px; }
-        .stat-card h2 { color: var(--primary); font-size: 30px; margin-top: 10px; }
-
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(44,24,16,0.8);
-            z-index: 1000;
-            overflow-y: auto;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: white;
-            margin: 30px auto;
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 520px;
-            width: 90%;
-            border-top: 5px solid var(--gold);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-        }
-
-        .modal-content h3 {
-            margin-bottom: 20px;
-            color: var(--primary);
-            font-size: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--gold);
-        }
-
-        .modal-content input,
-        .modal-content select {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 15px;
-        }
-
-        .modal-content input:focus,
-        .modal-content select:focus {
-            border-color: var(--gold);
-            outline: none;
-        }
-
-        .modal-total {
-            background: linear-gradient(135deg, var(--cream) 0%, var(--gold-light) 100%);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            text-align: center;
-            font-size: 20px;
-            color: var(--primary);
-            font-weight: bold;
-        }
-
-        .menu-item-choix {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .menu-item-choix .controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .menu-item-choix button {
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
-
-        .menu-item-choix span {
-            min-width: 25px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-
-        .empty-state .icon { font-size: 50px; margin-bottom: 10px; }
-
-        @media (max-width: 600px) {
-            .tab { padding: 12px 13px; font-size: 12px; }
-            .menu-grid { grid-template-columns: repeat(2, 1fr); }
-            .tables-grid { grid-template-columns: repeat(3, 1fr); }
-            .caisse-total h2 { font-size: 30px; }
-            .header-wa { display: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Secrets de Mame Fatou</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    color: #fff;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(90deg, #c2185b, #7b1fa2, #1976d2);
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ffd700, #ff6b9d);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+
+.logo h1 {
+    font-size: 24px;
+    background: linear-gradient(90deg, #fff, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo p {
+    font-size: 12px;
+    color: #ffd;
+}
+
+.whatsapp-btn {
+    background: #25D366;
+    padding: 10px 20px;
+    border-radius: 30px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.3s;
+}
+
+.whatsapp-btn:hover { transform: scale(1.05); }
+
+/* NAVIGATION */
+.nav {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(255,215,0,0.3);
+}
+
+.nav-menu {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.nav-btn {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #2e7d32, #1976d2);
+    border: none;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.nav-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, #c2185b, #d32f2f);
+    box-shadow: 0 0 20px rgba(255,0,100,0.5);
+}
+
+/* MAIN CONTAINER */
+.container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.page { display: none; animation: fadeIn 0.5s; }
+.page.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* DASHBOARD STATS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover { transform: translateY(-5px); }
+
+.stat-card.green { background: linear-gradient(135deg, #43a047, #1b5e20); }
+.stat-card.blue { background: linear-gradient(135deg, #1e88e5, #0d47a1); }
+.stat-card.red { background: linear-gradient(135deg, #e53935, #b71c1c); }
+.stat-card.purple { background: linear-gradient(135deg, #8e24aa, #4a148c); }
+
+.stat-card h3 { font-size: 14px; opacity: 0.9; margin-bottom: 10px; }
+.stat-card .value { font-size: 32px; font-weight: bold; }
+.stat-card .icon { font-size: 40px; opacity: 0.3; float: right; margin-top: -50px; }
+
+/* SECTION TITLE */
+.section-title {
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #ffd700;
+    text-align: center;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #c2185b, #1976d2);
+    margin: 10px auto;
+    border-radius: 2px;
+}
+
+/* PRODUCTS GRID */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.product-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+    border: 1px solid rgba(255,215,0,0.2);
+    backdrop-filter: blur(10px);
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(255,0,100,0.3);
+    border-color: #ffd700;
+}
+
+.product-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #c2185b, #1976d2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+}
+
+.product-info { padding: 20px; }
+
+.product-category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: linear-gradient(90deg, #c2185b, #7b1fa2);
+    border-radius: 15px;
+    font-size: 11px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.product-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.product-desc {
+    font-size: 13px;
+    color: #bbb;
+    margin-bottom: 15px;
+    min-height: 40px;
+}
+
+.product-price {
+    font-size: 24px;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.product-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    font-size: 13px;
+    flex: 1;
+}
+
+.btn-sell { background: linear-gradient(135deg, #43a047, #1b5e20); color: white; }
+.btn-edit { background: linear-gradient(135deg, #fb8c00, #e65100); color: white; }
+.btn-delete { background: linear-gradient(135deg, #e53935, #b71c1c); color: white; }
+.btn-primary { background: linear-gradient(135deg, #1e88e5, #0d47a1); color: white; padding: 12px 30px; font-size: 15px; }
+
+.btn:hover { transform: scale(1.05); }
+
+/* FORM */
+.form-container {
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,215,0,0.3);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #ffd700;
+}
+
+.image-preview {
+    width: 100%;
+    height: 200px;
+    border: 2px dashed rgba(255,215,0,0.5);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    background: rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* SALES TABLE */
+.sales-table {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.sales-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sales-table th {
+    background: linear-gradient(90deg, #c2185b, #1976d2);
+    padding: 15px;
+    text-align: left;
+    color: white;
+}
+
+.sales-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sales-table tr:hover { background: rgba(255,255,255,0.05); }
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    border: 2px solid #ffd700;
+    animation: scaleIn 0.3s;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #43a047, #1b5e20);
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    z-index: 3000;
+    transform: translateX(400px);
+    transition: transform 0.4s;
+}
+
+.notification.show { transform: translateX(0); }
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #bbb;
+}
+
+.empty-state .icon { font-size: 80px; margin-bottom: 20px; }
+
+footer {
+    text-align: center;
+    padding: 30px;
+    background: rgba(0,0,0,0.5);
+    margin-top: 50px;
+    color: #bbb;
+}
+
+@media (max-width: 768px) {
+    .logo h1 { font-size: 18px; }
+    .nav-btn { padding: 10px 15px; font-size: 12px; }
+}
+</style>
 </head>
 <body>
 
-<!-- NOTIFICATION VENTE -->
-<div id="notification" class="notification">
-    <div class="notif-icon">🛎️</div>
-    <div class="notif-body">
-        <div class="notif-title" id="notifTitle">Nouvelle vente !</div>
-        <div class="notif-sub" id="notifText">Commande validée avec succès</div>
-    </div>
-</div>
-
-<!-- LOGIN -->
-<div id="loginScreen" class="screen active">
-    <div class="login-container">
-        <div class="login-box">
-            <div class="logo">🌸</div>
-            <h1>LES SECRETS DE MAM DIOP</h1>
-            <div class="subtitle">✨ RESTAURANT & TRAITEUR ✨</div>
-            <a href="https://wa.me/0584583067" class="whatsapp-btn" target="_blank">
-                📱 WhatsApp : 05 84 58 30 67
-            </a>
-            <input type="text" id="username" placeholder="👤 Nom d'utilisateur">
-            <input type="password" id="password" placeholder="🔒 Mot de passe">
-            <button onclick="login()">SE CONNECTER</button>
-            <p id="loginError" class="error"></p>
-            <div class="info-box">
-                <strong>🔐 Accès :</strong><br>
-                • Admin : admin / admin123<br>
-                • Serveur : serveur / 1234
+<!-- HEADER -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">💎</div>
+            <div>
+                <h1>Les Secrets de Mame Fatou</h1>
+                <p>✨ Beauté • Séduction • Bien-être ✨</p>
             </div>
         </div>
+        <a href="https://wa.me/2250584583067" class="whatsapp-btn" target="_blank">
+            📱 WhatsApp: 05 84 58 30 67
+        </a>
     </div>
-</div>
+</header>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+    <div class="nav-menu">
+        <button class="nav-btn active" onclick="showPage('dashboard', this)">📊 Dashboard</button>
+        <button class="nav-btn" onclick="showPage('products', this)">🛍️ Produits</button>
+        <button class="nav-btn" onclick="showPage('add', this)">➕ Ajouter Produit</button>
+        <button class="nav-btn" onclick="showPage('sales', this)">💰 Ventes du Jour</button>
+        <button class="nav-btn" onclick="showPage('cashier', this)">🧾 Caisse</button>
+        <button class="nav-btn" onclick="showPage('secrets', this)">💋 Secrets</button>
+    </div>
+</nav>
+
+<div class="container">
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="screen">
-    <div class="header">
-        <div class="header-left">
-            <h2>🌸 <span>Les Secrets de Mam Diop</span></h2>
-            <small>✨ Restaurant & Traiteur</small>
+<div id="dashboard" class="page active">
+    <h2 class="section-title">📊 Tableau de Bord</h2>
+    <div class="stats-grid">
+        <div class="stat-card green">
+            <span class="icon">💰</span>
+            <h3>VENTES DU JOUR</h3>
+            <div class="value" id="stat-sales">0 FCFA</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px">
-            <a href="https://wa.me/0584583067" class="header-wa" target="_blank">
-                📱 05 84 58 30 67
-            </a>
-            <div class="user-info">
-                <span id="userName"></span>
-                <button onclick="logout()" class="btn-small">Déco.</button>
+        <div class="stat-card blue">
+            <span class="icon">📦</span>
+            <h3>PRODUITS EN STOCK</h3>
+            <div class="value" id="stat-products">0</div>
+        </div>
+        <div class="stat-card red">
+            <span class="icon">🛒</span>
+            <h3>TRANSACTIONS</h3>
+            <div class="value" id="stat-transactions">0</div>
+        </div>
+        <div class="stat-card purple">
+            <span class="icon">⭐</span>
+            <h3>PRODUIT VEDETTE</h3>
+            <div class="value" id="stat-top" style="font-size:18px;">-</div>
+        </div>
+    </div>
+    
+    <h2 class="section-title">🌟 Nos Produits Populaires</h2>
+    <div class="products-grid" id="dashboard-products"></div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="products" class="page">
+    <h2 class="section-title">🛍️ Catalogue de Produits</h2>
+    <div class="products-grid" id="products-list"></div>
+</div>
+
+<!-- ADD PRODUCT -->
+<div id="add" class="page">
+    <h2 class="section-title">➕ Ajouter un Nouveau Produit</h2>
+    <div class="form-container">
+        <div class="form-group">
+            <label>Nom du Produit *</label>
+            <input type="text" id="new-name" placeholder="Ex: Crème éclaircissante naturelle">
+        </div>
+        <div class="form-group">
+            <label>Catégorie *</label>
+            <select id="new-category">
+                <option value="Soins de peau">Soins de peau</option>
+                <option value="Secrets de séduction">Secrets de séduction</option>
+                <option value="Fidélisation amoureuse">Fidélisation amoureuse</option>
+                <option value="Bien-être féminin">Bien-être féminin</option>
+                <option value="Parfums & Encens">Parfums & Encens</option>
+                <option value="Autre">Autre</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Prix (FCFA) *</label>
+            <input type="number" id="new-price" placeholder="Ex: 15000">
+        </div>
+        <div class="form-group">
+            <label>Stock</label>
+            <input type="number" id="new-stock" value="10">
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="new-desc" rows="3" placeholder="Décrivez votre produit..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>📷 Photo du Produit (depuis votre galerie)</label>
+            <input type="file" id="new-image" accept="image/*" onchange="previewImage(event)">
+            <div class="image-preview" id="image-preview">
+                <span style="color:#888;">Aucune image sélectionnée</span>
             </div>
         </div>
+        <button class="btn btn-primary" onclick="addProduct()" style="width:100%;">✅ Ajouter le Produit</button>
     </div>
+</div>
 
-    <div class="nav-tabs">
-        <button class="tab active" onclick="showTab('commandes', this)">📋 Commandes</button>
-        <button class="tab" onclick="showTab('menu', this)">🍕 Menu</button>
-        <button class="tab" onclick="showTab('tables', this)">🪑 Tables</button>
-        <button class="tab" onclick="showTab('caisse', this)">💰 Caisse</button>
-        <button class="tab" onclick="showTab('stats', this)">📊 Stats</button>
+<!-- SALES -->
+<div id="sales" class="page">
+    <h2 class="section-title">💰 Ventes du Jour</h2>
+    <div class="stats-grid">
+        <div class="stat-card green">
+            <h3>TOTAL DU JOUR</h3>
+            <div class="value" id="sales-total">0 FCFA</div>
+        </div>
+        <div class="stat-card blue">
+            <h3>NOMBRE DE VENTES</h3>
+            <div class="value" id="sales-count">0</div>
+        </div>
     </div>
-
-    <!-- COMMANDES -->
-    <div id="tab-commandes" class="tab-content active">
-        <div class="section-header">
-            <h3>📋 Commandes en cours</h3>
-            <button onclick="nouvelleCommande()" class="btn-add">+ Nouvelle Commande</button>
-        </div>
-        <div id="listeCommandes"></div>
+    <div class="sales-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Heure</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="sales-tbody"></tbody>
+        </table>
     </div>
+</div>
 
-    <!-- MENU -->
-    <div id="tab-menu" class="tab-content">
-        <div class="section-header">
-            <h3>🍕 Notre Menu</h3>
-            <button onclick="ajouterPlat()" class="btn-add">+ Ajouter un Plat</button>
+<!-- CASHIER -->
+<div id="cashier" class="page">
+    <h2 class="section-title">🧾 Caisse - Clôture de Journée</h2>
+    <div class="form-container" style="text-align:center;">
+        <div style="font-size:72px; margin-bottom:20px;">💵</div>
+        <h3 style="color:#ffd700; margin-bottom:20px;">Récapitulatif de la Journée</h3>
+        <div style="background:rgba(0,0,0,0.3); padding:25px; border-radius:10px; margin-bottom:20px;">
+            <p style="font-size:16px; margin-bottom:10px;">Total des ventes:</p>
+            <p style="font-size:42px; color:#43a047; font-weight:bold;" id="cashier-total">0 FCFA</p>
+            <p style="margin-top:15px;">Nombre de transactions: <strong id="cashier-count">0</strong></p>
+            <p>Produits vendus: <strong id="cashier-items">0</strong></p>
         </div>
-        <div id="listeMenu"></div>
+        <button class="btn btn-primary" onclick="closeCash()" style="background:linear-gradient(135deg,#e53935,#b71c1c); margin-right:10px;">🔒 Clôturer la Caisse</button>
+        <button class="btn btn-primary" onclick="printReport()">🖨️ Imprimer le Rapport</button>
     </div>
+</div>
 
-    <!-- TABLES -->
-    <div id="tab-tables" class="tab-content">
-        <div class="section-header">
-            <h3>🪑 État des Tables</h3>
-        </div>
-        <div id="listeTables" class="tables-grid"></div>
-    </div>
-
-    <!-- CAISSE -->
-    <div id="tab-caisse" class="tab-content">
-        <div class="section-header">
-            <h3>💰 Caisse du jour</h3>
-        </div>
-        <div class="caisse-total">
-            <p>RECETTE DU JOUR</p>
-            <h2 id="totalJour">0 FCFA</h2>
-        </div>
-        <div id="listeCaisse"></div>
-    </div>
-
-    <!-- STATS -->
-    <div id="tab-stats" class="tab-content">
-        <div class="section-header">
-            <h3>📊 Statistiques</h3>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <p>🍽️ Commandes payées</p>
-                <h2 id="statCommandes">0</h2>
+<!-- SECRETS -->
+<div id="secrets" class="page">
+    <h2 class="section-title">💋 Les Secrets de Mame Fatou</h2>
+    <div class="products-grid">
+        <div class="product-card">
+            <div class="product-img">💄</div>
+            <div class="product-info">
+                <span class="product-category">Séduction</span>
+                <div class="product-name">Secrets pour Attirer les Hommes</div>
+                <p class="product-desc">Découvrez des rituels ancestraux pour devenir irrésistible.</p>
+                <a href="https://wa.me/2250584583067" class="btn btn-sell" style="text-decoration:none; display:block; text-align:center;">📱 Consulter sur WhatsApp</a>
             </div>
-            <div class="stat-card">
-                <p>💰 Recette du jour</p>
-                <h2 id="statRecette">0 FCFA</h2>
+        </div>
+        <div class="product-card">
+            <div class="product-img">💍</div>
+            <div class="product-info">
+                <span class="product-category">Fidélité</span>
+                <div class="product-name">Maintenir son Homme</div>
+                <p class="product-desc">Les secrets pour garder votre homme amoureux et fidèle.</p>
+                <a href="https://wa.me/2250584583067" class="btn btn-sell" style="text-decoration:none; display:block; text-align:center;">📱 Consulter sur WhatsApp</a>
             </div>
-            <div class="stat-card">
-                <p>🪑 Tables occupées</p>
-                <h2 id="statTables">0</h2>
+        </div>
+        <div class="product-card">
+            <div class="product-img">🌸</div>
+            <div class="product-info">
+                <span class="product-category">Bien-être</span>
+                <div class="product-name">Soins Intimes Féminins</div>
+                <p class="product-desc">Produits naturels pour le bien-être féminin.</p>
+                <a href="https://wa.me/2250584583067" class="btn btn-sell" style="text-decoration:none; display:block; text-align:center;">📱 Consulter sur WhatsApp</a>
             </div>
-            <div class="stat-card">
-                <p>🍕 Plats au menu</p>
-                <h2 id="statPlats">0</h2>
+        </div>
+        <div class="product-card">
+            <div class="product-img">✨</div>
+            <div class="product-info">
+                <span class="product-category">Beauté</span>
+                <div class="product-name">Éclat de Peau Naturel</div>
+                <p class="product-desc">Recettes traditionnelles pour une peau éclatante.</p>
+                <a href="https://wa.me/2250584583067" class="btn btn-sell" style="text-decoration:none; display:block; text-align:center;">📱 Consulter sur WhatsApp</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL COMMANDE -->
-<div id="modalCommande" class="modal">
+</div>
+
+<!-- MODAL SELL -->
+<div class="modal" id="sell-modal">
     <div class="modal-content">
-        <h3>📋 Nouvelle Commande</h3>
-        <select id="tableCommande">
-            <option value="">🪑 Choisir une table</option>
-        </select>
-        <div id="menuChoix" style="max-height:380px;overflow-y:auto;margin-top:10px"></div>
-        <div class="modal-total">
-            💰 Total : <span id="totalCommande">0</span> FCFA
+        <h3 style="color:#ffd700; margin-bottom:20px;">💰 Enregistrer une Vente</h3>
+        <p id="sell-product-name" style="margin-bottom:15px; font-size:18px;"></p>
+        <div class="form-group">
+            <label>Quantité</label>
+            <input type="number" id="sell-qty" value="1" min="1">
         </div>
-        <button onclick="validerCommande()" class="btn-green">✅ Valider la commande</button>
-        <button onclick="fermerModal('modalCommande')" class="btn-red">❌ Annuler</button>
+        <div style="display:flex; gap:10px;">
+            <button class="btn btn-sell" onclick="confirmSale()" style="flex:1;">✅ Valider la Vente</button>
+            <button class="btn btn-delete" onclick="closeModal()" style="flex:1;">❌ Annuler</button>
+        </div>
     </div>
 </div>
 
-<!-- MODAL AJOUTER PLAT -->
-<div id="modalPlat" class="modal">
-    <div class="modal-content">
-        <h3>🍕 Ajouter un Plat</h3>
-        <input type="text" id="platNom" placeholder="Nom du plat">
-        <input type="number" id="platPrix" placeholder="Prix (FCFA)">
-        <input type="text" id="platEmoji" placeholder="Emoji (ex: 🍗)">
-        <select id="platCategorie">
-            <option value="Plats Principaux">🍽️ Plats Principaux</option>
-            <option value="Grillades">🔥 Grillades</option>
-            <option value="Accompagnements">🥗 Accompagnements</option>
-            <option value="Boissons">🥤 Boissons</option>
-            <option value="Desserts">🍮 Desserts</option>
-        </select>
-        <button onclick="confirmerAjoutPlat()" class="btn-green">✅ Ajouter</button>
-        <button onclick="fermerModal('modalPlat')" class="btn-red">❌ Annuler</button>
-    </div>
-</div>
+<div class="notification" id="notification">✅ Vente enregistrée!</div>
+
+<footer>
+    <p style="margin-bottom:10px;">💎 <strong>Les Secrets de Mame Fatou</strong> 💎</p>
+    <p>📱 WhatsApp: <a href="https://wa.me/2250584583067" style="color:#25D366;">05 84 58 30 67</a></p>
+    <p style="margin-top:10px; font-size:12px;">© 2025 - Tous droits réservés</p>
+</footer>
 
 <script>
-// ========== DONNÉES ==========
-let utilisateurs = [
-    { nom: "Admin", user: "admin", pass: "admin123", role: "admin" },
-    { nom: "Serveur", user: "serveur", pass: "1234", role: "serveur" }
+// DATA
+let products = JSON.parse(localStorage.getItem('mamefatou_products')) || [
+    {id:1, name:"Crème Éclaircissante Naturelle", category:"Soins de peau", price:15000, stock:25, desc:"Crème naturelle pour éclaircir la peau en douceur", img:"🧴"},
+    {id:2, name:"Savon au Karité Pur", category:"Soins de peau", price:5000, stock:50, desc:"Savon artisanal au beurre de karité", img:"🧼"},
+    {id:3, name:"Huile d'Argan Précieuse", category:"Soins de peau", price:12000, stock:30, desc:"Huile pure pour peau et cheveux", img:"💧"},
+    {id:4, name:"Parfum Envoûtant", category:"Parfums & Encens", price:25000, stock:15, desc:"Parfum aux phéromones attirantes", img:"🌹"},
+    {id:5, name:"Encens de Séduction", category:"Secrets de séduction", price:8000, stock:40, desc:"Encens traditionnel pour attirer l'amour", img:"🕯️"},
+    {id:6, name:"Tisane d'Amour", category:"Fidélisation amoureuse", price:10000, stock:20, desc:"Tisane à base de plantes secrètes", img:"🍵"},
+    {id:7, name:"Masque Visage à l'Argile", category:"Soins de peau", price:7000, stock:35, desc:"Purifie et illumine le teint", img:"💆‍♀️"},
+    {id:8, name:"Gélule Bien-être Féminin", category:"Bien-être féminin", price:18000, stock:22, desc:"Complément naturel pour la femme", img:"💊"}
 ];
 
-let menu = [
-    { id:1, nom:"Thiéboudienne", prix:3500, emoji:"🍚", categorie:"Plats Principaux" },
-    { id:2, nom:"Yassa Poulet", prix:3000, emoji:"🍗", categorie:"Plats Principaux" },
-    { id:3, nom:"Mafé Boeuf", prix:3200, emoji:"🥘", categorie:"Plats Principaux" },
-    { id:4, nom:"Poulet Braisé", prix:4500, emoji:"🍖", categorie:"Grillades" },
-    { id:5, nom:"Poisson Braisé", prix:4000, emoji:"🐟", categorie:"Grillades" },
-    { id:6, nom:"Riz Blanc", prix:500, emoji:"🍚", categorie:"Accompagnements" },
-    { id:7, nom:"Attiéké", prix:700, emoji:"🌾", categorie:"Accompagnements" },
-    { id:8, nom:"Eau Minérale", prix:500, emoji:"💧", categorie:"Boissons" },
-    { id:9, nom:"Jus Bissap", prix:800, emoji:"🍹", categorie:"Boissons" },
-    { id:10, nom:"Thiakry", prix:1000, emoji:"🍮", categorie:"Desserts" }
-];
+let sales = JSON.parse(localStorage.getItem('mamefatou_sales')) || [];
+let currentProductToSell = null;
+let newImageData = null;
 
-let commandes = [];
-let ventesJour = [];
-let tables = Array.from({length:12}, (_,i) => ({ num: i+1, statut: "libre" }));
-let userConnecte = null;
-let quantitesCommande = {};
-
-// ========== AUDIO ==========
-function jouerSonVente() {
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [523, 659, 784, 1047, 784, 1047];
-        const durees = [0.12, 0.12, 0.12, 0.25, 0.12, 0.3];
-        let t = ctx.currentTime;
-        notes.forEach((freq, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, t);
-            gain.gain.setValueAtTime(0.4, t);
-            gain.gain.exponentialRampToValueAtTime(0.001, t + durees[i]);
-            osc.start(t);
-            osc.stop(t + durees[i]);
-            t += durees[i] + 0.05;
-        });
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-    } catch(e) { console.log("Audio non disponible"); }
+function saveData() {
+    localStorage.setItem('mamefatou_products', JSON.stringify(products));
+    localStorage.setItem('mamefatou_sales', JSON.stringify(sales));
 }
 
-function afficherNotification(titre, message) {
-    const notif = document.getElementById('notification');
-    document.getElementById('notifTitle').textContent = titre;
-    document.getElementById('notifText').textContent = message;
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 4000);
+function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    renderAll();
 }
 
-// ========== AUTH ==========
-function login() {
-    const u = document.getElementById('username').value.trim();
-    const p = document.getElementById('password').value.trim();
-    const trouve = utilisateurs.find(x => x.user === u && x.pass === p);
-    if (trouve) {
-        userConnecte = trouve;
-        document.getElementById('userName').textContent = '👤 ' + trouve.nom;
-        document.getElementById('loginScreen').classList.remove('active');
-        document.getElementById('dashboard').classList.add('active');
-        renderTout();
-    } else {
-        document.getElementById('loginError').textContent = '❌ Identifiants incorrects !';
+function renderProducts(containerId) {
+    const container = document.getElementById(containerId);
+    if (products.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="icon">📦</div><h3>Aucun produit pour le moment</h3><p>Cliquez sur "Ajouter Produit" pour commencer</p></div>';
+        return;
+    }
+    container.innerHTML = products.map(p => `
+        <div class="product-card">
+            <div class="product-img">${p.img && p.img.startsWith('data:') ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;">` : p.img || '📦'}</div>
+            <div class="product-info">
+                <span class="product-category">${p.category}</span>
+                <div class="product-name">${p.name}</div>
+                <p class="product-desc">${p.desc || ''}</p>
+                <p style="font-size:12px; color:#aaa;">Stock: ${p.stock}</p>
+                <div class="product-price">${p.price.toLocaleString()} FCFA</div>
+                <div class="product-actions">
+                    <button class="btn btn-sell" onclick="openSellModal(${p.id})">💰 Vendre</button>
+                    <button class="btn btn-delete" onclick="deleteProduct(${p.id})">🗑️</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function previewImage(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            newImageData = ev.target.result;
+            document.getElementById('image-preview').innerHTML = `<img src="${ev.target.result}">`;
+        };
+        reader.readAsDataURL(file);
     }
 }
 
-function logout() {
-    userConnecte = null;
-    document.getElementById('dashboard').classList.remove('active');
-    document.getElementById('loginScreen').classList.add('active');
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('loginError').textContent = '';
+function addProduct() {
+    const name = document.getElementById('new-name').value.trim();
+    const category = document.getElementById('new-category').value;
+    const price = parseInt(document.getElementById('new-price').value);
+    const stock = parseInt(document.getElementById('new-stock').value) || 10;
+    const desc = document.getElementById('new-desc').value.trim();
+    
+    if (!name || !price) {
+        alert('⚠️ Veuillez remplir le nom et le prix');
+        return;
+    }
+    
+    const newId = products.length ? Math.max(...products.map(p=>p.id)) + 1 : 1;
+    products.push({
+        id: newId, name, category, price, stock, desc,
+        img: newImageData || '✨'
+    });
+    saveData();
+    
+    document.getElementById('new-name').value = '';
+    document.getElementById('new-price').value = '';
+    document.getElementById('new-desc').value = '';
+    document.getElementById('new-stock').value = '10';
+    document.getElementById('new-image').value = '';
+    document.getElementById('image-preview').innerHTML = '<span style="color:#888;">Aucune image sélectionnée</span>';
+    newImageData = null;
+    
+    showNotification('✅ Produit ajouté avec succès!');
+    renderAll();
 }
 
-// ========== NAVIGATION ==========
-function showTab(tab, el) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('tab-' + tab).classList.add('active');
-    el.classList.add('active');
-    if (tab === 'stats') renderStats();
+function deleteProduct(id) {
+    if (confirm('Supprimer ce produit?')) {
+        products = products.filter(p => p.id !== id);
+        saveData();
+        renderAll();
+        showNotification('🗑️ Produit supprimé');
+    }
 }
 
-// ========== RENDER ==========
-function renderTout() {
-    renderCommandes();
-    renderMenu();
-    renderTables();
-    renderCaisse();
+function openSellModal(id) {
+    currentProductToSell = products.find(p => p.id === id);
+    document.getElementById('sell-product-name').innerText = `${currentProductToSell.name} - ${currentProductToSell.price.toLocaleString()} FCFA`;
+    document.getElementById('sell-qty').value = 1;
+    document.getElementById('sell-modal').classList.add('active');
 }
 
-function renderMenu() {
-    const cats = [...new Set(menu.map(p => p.categorie))];
-    const icones = {
-        "Plats Principaux":"🍽️","Grillades":"🔥",
-        "Accompagnements":"🥗","Boissons":"🥤","Desserts":"🍮"
+function closeModal() {
+    document.getElementById('sell-modal').classList.remove('active');
+}
+
+function confirmSale() {
+    const qty = parseInt(document.getElementById('sell-qty').value);
+    if (qty < 1 || qty > currentProductToSell.stock) {
+        alert('Stock insuffisant!');
+        return;
+    }
+    
+    const sale = {
+        time: new Date().toLocaleString('fr-FR'),
+        productName: currentProductToSell.name,
+        qty: qty,
+        price: currentProductToSell.price,
+        total: qty * currentProductToSell.price,
+        date: new Date().toDateString()
     };
-    let html = '';
-    cats.forEach(cat => {
-        const plats = menu.filter(p => p.categorie === cat);
-        html += `<div class="categorie-section">
-            <div class="categorie-title">${icones[cat]||'🍴'} ${cat}</div>
-            <div class="menu-grid">`;
-        plats.forEach(p => {
-            html += `<div class="plat-card">
-                <div class="plat-emoji">${p.emoji}</div>
-                <div class="plat-nom">${p.nom}</div>
-                <div class="plat-prix">${p.prix.toLocaleString()} FCFA</div>
-                <div class="plat-actions">
-                    <button class="btn-delete" onclick="supprimerPlat(${p.id})">🗑️ Supprimer</button>
-                </div>
-            </div>`;
-        });
-        html += `</div></div>`;
-    });
-    if (!menu.length) html = `<div class="empty-state"><div class="icon">🍽️</div><p>Aucun plat au menu</p></div>`;
-    document.getElementById('listeMenu').innerHTML = html;
+    sales.push(sale);
+    currentProductToSell.stock -= qty;
+    saveData();
+    playSound();
+    showNotification(`✅ Vente validée: ${sale.total.toLocaleString()} FCFA`);
+    closeModal();
+    renderAll();
 }
 
-function renderCommandes() {
-    const actives = commandes.filter(c => c.statut !== 'payee');
-    let html = '';
-    actives.forEach(c => {
-        const items = c.items.map(i => `${i.emoji} ${i.nom} x${i.qte}`).join(', ');
-        html += `<div class="commande-card">
-            <h4>🪑 Table ${c.table} <span class="badge">${c.statut.toUpperCase()}</span></h4>
-            <p style="color:#555;font-size:14px">📝 ${items}</p>
-            <p style="margin-top:6px;font-weight:bold;color:var(--primary)">💰 ${c.total.toLocaleString()} FCFA</p>
-            <div class="commande-actions">
-                <button style="background:var(--success);color:white" onclick="payerCommande(${c.id})">✅ Encaisser</button>
-                <button style="background:var(--danger);color:white" onclick="supprimerCommande(${c.id})">🗑️ Supprimer</button>
-            </div>
-        </div>`;
-    });
-    if (!actives.length) html = `<div class="empty-state"><div class="icon">📋</div><p>Aucune commande en cours</p></div>`;
-    document.getElementById('listeCommandes').innerHTML = html;
+function playSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 800;
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        osc.start();
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.stop(ctx.currentTime + 0.3);
+        
+        setTimeout(() => {
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.frequency.value = 1200;
+            gain2.gain.setValueAtTime(0.3, ctx.currentTime);
+            osc2.start();
+            gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+            osc2.stop(ctx.currentTime + 0.3);
+        }, 150);
+    } catch(e) { console.log(e); }
 }
 
-function renderTables() {
-    let html = '';
-    tables.forEach(t => {
-        const cmd = commandes.find(c => c.table == t.num && c.statut !== 'payee');
-        const occupee = !!cmd;
-        html += `<div class="table-card ${occupee ? 'occupee' : 'libre'}">
-            <div class="table-icon">${occupee ? '🔴' : '🟢'}</div>
-            <strong>Table ${t.num}</strong><br>
-            <small style="color:${occupee?'var(--danger)':'var(--success)'}">
-                ${occupee ? 'Occupée' : 'Libre'}
-            </small>
-        </div>`;
-    });
-    document.getElementById('listeTables').innerHTML = html;
+function showNotification(msg) {
+    const n = document.getElementById('notification');
+    n.innerText = msg;
+    n.classList.add('show');
+    setTimeout(() => n.classList.remove('show'), 3000);
 }
 
-function renderCaisse() {
-    const total = ventesJour.reduce((s, v) => s + v.total, 0);
-    document.getElementById('totalJour').textContent = total.toLocaleString() + ' FCFA';
-    let html = '';
-    [...ventesJour].reverse().forEach(v => {
-        html += `<div class="caisse-card">
-            <div>
-                <strong>🪑 Table ${v.table}</strong><br>
-                <small style="color:#666">${v.heure}</small>
-            </div>
-            <strong style="color:var(--success)">${v.total.toLocaleString()} FCFA</strong>
-        </div>`;
-    });
-    if (!ventesJour.length) html = `<div class="empty-state"><div class="icon">💰</div><p>Aucune vente aujourd'hui</p></div>`;
-    document.getElementById('listeCaisse').innerHTML = html;
+function getTodaySales() {
+    const today = new Date().toDateString();
+    return sales.filter(s => s.date === today);
 }
 
 function renderStats() {
-    const total = ventesJour.reduce((s, v) => s + v.total, 0);
-    const occupees = tables.filter(t => commandes.find(c => c.table == t.num && c.statut !== 'payee')).length;
-    document.getElementById('statCommandes').textContent = ventesJour.length;
-    document.getElementById('statRecette').textContent = total.toLocaleString() + ' FCFA';
-    document.getElementById('statTables').textContent = occupees;
-    document.getElementById('statPlats').textContent = menu.length;
-}
-
-// ========== COMMANDES ==========
-function nouvelleCommande() {
-    quantitesCommande = {};
-    const sel = document.getElementById('tableCommande');
-    sel.innerHTML = '<option value="">🪑 Choisir une table</option>';
-    tables.forEach(t => {
-        const occupee = commandes.find(c => c.table == t.num && c.statut !== 'payee');
-        if (!occupee) {
-            sel.innerHTML += `<option value="${t.num}">Table ${t.num}</option>`;
-        }
-    });
-
-    const cats = [...new Set(menu.map(p => p.categorie))];
-    const icones = {
-        "Plats Principaux":"🍽️","Grillades":"🔥",
-        "Accompagnements":"🥗","Boissons":"🥤","Desserts":"🍮"
-    };
-    let html = '';
-    cats.forEach(cat => {
-        html += `<p style="font-weight:bold;color:var(--primary);padding:10px 0 5px;border-bottom:1px solid var(--gold)">${icones[cat]||'🍴'} ${cat}</p>`;
-        menu.filter(p => p.categorie === cat).forEach(p => {
-            quantitesCommande[p.id] = 0;
-            html += `<div class="menu-item-choix">
-                <div>
-                    <span style="font-size:20px">${p.emoji}</span>
-                    <strong style="font-size:14px"> ${p.nom}</strong><br>
-                    <small style="color:var(--primary);font-weight:bold">${p.prix.toLocaleString()} FCFA</small>
-                </div>
-                <div class="controls">
-                    <button onclick="changerQte(${p.id},-1)">−</button>
-                    <span id="qte-${p.id}">0</span>
-                    <button onclick="changerQte(${p.id},1)">+</button>
-                </div>
-            </div>`;
-        });
-    });
-
-    document.getElementById('menuChoix').innerHTML = html;
-    document.getElementById('totalCommande').textContent = '0';
-    document.getElementById('modalCommande').style.display = 'block';
-}
-
-function changerQte(id, delta) {
-    quantitesCommande[id] = Math.max(0, (quantitesCommande[id] || 0) + delta);
-    document.getElementById('qte-' + id).textContent = quantitesCommande[id];
-    let total = 0;
-    Object.keys(quantitesCommande).forEach(pid => {
-        const plat = menu.find(p => p.id == pid);
-        if (plat) total += plat.prix * quantitesCommande[pid];
-    });
-    document.getElementById('totalCommande').textContent = total.toLocaleString();
-}
-
-function validerCommande() {
-    const table = document.getElementById('tableCommande').value;
-    if (!table) { alert('⚠️ Veuillez choisir une table !'); return; }
-    const items = [];
-    let total = 0;
-    Object.keys(quantitesCommande).forEach(pid => {
-        if (quantitesCommande[pid] > 0) {
-            const plat = menu.find(p => p.id == pid);
-            if (plat) {
-                items.push({ ...plat, qte: quantitesCommande[pid] });
-                total += plat.prix * quantitesCommande[pid];
-            }
-        }
-    });
-    if (!items.length) { alert('⚠️ Veuillez choisir au moins un plat !'); return; }
-
-    const cmd = {
-        id: Date.now(),
-        table: parseInt(table),
-        items,
-        total,
-        statut: 'en cours',
-        heure: new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})
-    };
-    commandes.push(cmd);
-    fermerModal('modalCommande');
-    renderTout();
-
-    // 🔔 ALERTE SONORE COMMANDE
-    jouerSonVente();
-    afficherNotification('🛎️ Nouvelle Commande !', `Table ${table} — ${total.toLocaleString()} FCFA`);
-}
-
-function payerCommande(id) {
-    const cmd = commandes.find(c => c.id === id);
-    if (!cmd) return;
-    if (!confirm(`✅ Encaisser ${cmd.total.toLocaleString()} FCFA pour la Table ${cmd.table} ?`)) return;
-    cmd.statut = 'payee';
-    ventesJour.push({
-        table: cmd.table,
-        total: cmd.total,
-        heure: new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})
-    });
-    renderTout();
-
-    // 🔔 ALERTE SONORE PAIEMENT
-    jouerSonVente();
-    afficherNotification('💰 Vente Encaissée !', `Table ${cmd.table} — ${cmd.total.toLocaleString()} FCFA`);
-}
-
-function supprimerCommande(id) {
-    if (!confirm('Supprimer cette commande ?')) return;
-    commandes = commandes.filter(c => c.id !== id);
-    renderTout();
-}
-
-// ========== PLATS ==========
-function ajouterPlat() {
-    document.getElementById('platNom').value = '';
-    document.getElementById('platPrix').value = '';
-    document.getElementById('platEmoji').value = '';
-    document.getElementById('modalPlat').style.display = 'block';
-}
-
-function confirmerAjoutPlat() {
-    const nom = document.getElementById('platNom').value.trim();
-    const prix = parseInt(document.getElementById('platPrix').value);
-    const emoji = document.getElementById('platEmoji').value.trim() || '🍽️';
-    const categorie = document.getElementById('platCategorie').value;
-    if (!nom || !prix) { alert('⚠️ Remplissez le nom et le prix !'); return; }
-    menu.push({ id: Date.now(), nom, prix, emoji, categorie });
-    fermerModal('modalPlat');
-    renderMenu();
-    afficherNotification('✅ Plat ajouté !', nom + ' — ' + prix.toLocaleString() + ' FCFA');
-}
-
-function supprimerPlat(id) {
-    if (!confirm('Supprimer ce plat ?')) return;
-    menu = menu.filter(p => p.id !== id);
-    renderMenu();
-}
-
-// ========== UTILS ==========
-function fermerModal(id) {
-    document.getElementById(id).style.display = 'none';
-}
-
-window.onclick = function(e) {
-    if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
+    const todaySales = getTodaySales();
+    const total = todaySales.reduce((a, b) => a + b.total, 0);
+    document.getElementById('stat-sales').innerText = total.toLocaleString() + ' FCFA';
+    document.getElementById('stat-products').innerText = products.length;
+    document.getElementById('stat-transactions').innerText = todaySales.length;
+    
+    if (todaySales.length > 0) {
+        const counts = {};
+        todaySales.forEach(s => counts[s.productName] = (counts[s.productName] || 0) + s.qty);
+        const top = Object.entries(counts).sort((a,b) => b[1]-a[1])[0];
+        document.getElementById('stat-top').innerText = top[0];
     }
-};
+}
 
-// Enter pour login
-document.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        const ls = document.getElementById('loginScreen');
-        if (ls.classList.contains('active')) login();
+function renderSales() {
+    const todaySales = getTodaySales();
+    const total = todaySales.reduce((a, b) => a + b.total, 0);
+    document.getElementById('sales-total').innerText = total.toLocaleString() + ' FCFA';
+    document.getElementById('sales-count').innerText = todaySales.length;
+    document.getElementById('cashier-total').innerText = total.toLocaleString() + ' FCFA';
+    document.getElementById('cashier-count').innerText = todaySales.length;
+    document.getElementById('cashier-items').innerText = todaySales.reduce((a,b) => a + b.qty, 0);
+    
+    const tbody = document.getElementById('sales-tbody');
+    if (todaySales.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px;">Aucune vente aujourd\'hui</td></tr>';
+    } else {
+        tbody.innerHTML = todaySales.map(s => `
+            <tr>
+                <td>${s.time.split(' ')[1] || s.time}</td>
+                <td>${s.productName}</td>
+                <td>${s.qty}</td>
+                <td>${s.price.toLocaleString()} FCFA</td>
+                <td><strong style="color:#43a047;">${s.total.toLocaleString()} FCFA</strong></td>
+            </tr>
+        `).join('');
     }
-});
+}
+
+function closeCash() {
+    if (confirm('Clôturer la caisse? Les ventes du jour seront archivées.')) {
+        const total = getTodaySales().reduce((a,b)=>a+b.total,0);
+        alert(`✅ Caisse clôturée!\n\nTotal du jour: ${total.toLocaleString()} FCFA`);
+        showNotification('🔒 Caisse clôturée avec succès');
+    }
+}
+
+function printReport() {
+    const todaySales = getTodaySales();
+    const total = todaySales.reduce((a,b)=>a+b.total,0);
+    const win = window.open('', '_blank');
+    win.document.write(`
+        <html><head><title>Rapport - Les Secrets de Mame Fatou</title>
+        <style>body{font-family:Arial;padding:20px;}table{width:100%;border-collapse:collapse;}th,td{padding:10px;border:1px solid #ddd;text-align:left;}th{background:#c2185b;color:white;}</style>
+        </head><body>
+        <h1>📊 Les Secrets de Mame Fatou</h1>
+        <h2>Rapport du ${new Date().toLocaleDateString('fr-FR')}</h2>
+        <p>📱 WhatsApp: 05 84 58 30 67</p>
+        <table><thead><tr><th>Heure</th><th>Produit</th><th>Qté</th><th>Prix</th><th>Total</th></tr></thead><tbody>
+        ${todaySales.map(s=>`<tr><td>${s.time}</td><td>${s.productName}</td><td>${s.qty}</td><td>${s.price.toLocaleString()}</td><td>${s.total.toLocaleString()}</td></tr>`).join('')}
+        </tbody></table>
+        <h2 style="margin-top:20px;">TOTAL: ${total.toLocaleString()} FCFA</h2>
+        </body></html>
+    `);
+    win.print();
+}
+
+function renderAll() {
+    renderProducts('products-list');
+    renderProducts('dashboard-products');
+    renderStats();
+    renderSales();
+}
+
+renderAll();
 </script>
+
 </body>
 </html>
